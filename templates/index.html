@@ -6,11 +6,18 @@
 </head>
 <body>
     <h2>Guerra empezada el {{ weekday }}</h2>
+
+    <div><h4>Instrucciones:</h4>
+    Decir quién eres y con qué ejército vas a atacar.<br>
+    Si quieres cambiar el ejército pon el mismo nombre y se reemplazará<br>
+    No seáis cabrones e intentéis petar esto que lo he hecho en nada de tiempo...</div><br><br>
+
     <form method=post>
         {% csrf_token %}
         Soy <input type=text name=attacker required> y voy a atacar con <input type=text name=army required>
         <input type=submit value=Aceptar>
     </form>
+    <br>
     {% for attack in attacks %}
         {{ attack.attacker }} va a atacar con {{ attack.army }}<br>
     {% endfor %}
