@@ -5,6 +5,14 @@
     <title>Index</title>
 </head>
 <body>
-    HI
+    <h2>Guerra empezada el {{ weekday }}</h2>
+    <form method=post>
+        {% csrf_token %}
+        Soy <input type=text name=attacker required> y voy a atacar con <input type=text name=army required>
+        <input type=submit value=Aceptar>
+    </form>
+    {% for attack in attacks %}
+        {{ attack.attacker }} va a atacar con {{ attack.army }}<br>
+    {% endfor %}
 </body>
 </html>
