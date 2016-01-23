@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 
+import dj_database_url
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -76,12 +78,21 @@ WSGI_APPLICATION = 'ResistenciaCoC.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+# Database
+# https://docs.djangoproject.com/en/1.8/ref/settings/#databases
+# Use a local database if I'm working on local.
+
+DATABASES = {}
+# If you are a colaborator please add your computer name to the statement.
+if (os.getenv('COMPUTERNAME', '')).startswith('YARRICK'):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': 'db.sqlite3'
+        }
     }
-}
+else:
+    DATABASES['default'] = dj_database_url.config()
 
 
 # Internationalization
