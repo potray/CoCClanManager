@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Index</title>
+    <title>Resistencia CoC</title>
 </head>
 <body>
     <h2>Guerra empezada el {{ weekday }}</h2>
@@ -17,6 +17,7 @@
         Soy <input type=text name=attacker required> y voy a atacar con <input type=text name=army required>
         <input type=submit value=Aceptar>
     </form>
+
     <br>
     {% for attack in attacks %}
         {{ attack.attacker }} va a atacar con {{ attack.army }}<br>

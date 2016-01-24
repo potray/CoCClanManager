@@ -46,6 +46,12 @@ def index(request):
             current_war[0].ended = True
             current_war[0].save()
 
+    else:
+        # Just get the current war if there is any.
+        current_war = War.objects.filter(ended=False)
+        if current_war:
+            current_war = current_war[0]
+
     # Check if some data was sent
     if request.method == 'POST':
         # Get the data
@@ -63,9 +69,13 @@ def index(request):
         else:
             new_attack.save()
 
-    # Get all the attacks in this war
-    attacks = Attack.objects.filter(war=current_war)
+    # Get template arguments
+    args = {}
+    if current_war:
+        # Get all the attacks in this war
+        attacks = Attack.objects.filter(war=current_war)
+        args['war'] = current_war
+        args['weekday'] = current_war.date.strftime('%A')
+        args['attacks'] = attacks
 
-    return render(request, 'index.html', {'war': current_war,
-                                          'weekday': current_war.date.strftime('%A'),
-                                          'attacks': attacks})
+    return render(request, 'index.html', args)
