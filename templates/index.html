@@ -1,26 +1,410 @@
 <!DOCTYPE html>
-<html lang="en">
+
+<html lang = "en">
 <head>
-    <meta charset="UTF-8">
+    {% load staticfiles %}
+    <meta charset = "UTF-8">
+    <!--Let browser know website is optimized for mobile-->
+    <meta name = "viewport" content = "width=device-width, initial-scale=1.0"/>
     <title>Resistencia CoC</title>
+    <!--Import Google Icon Font-->
+    <link href = "http://fonts.googleapis.com/icon?family=Material+Icons" rel = "stylesheet"/>
+    <!--Import materialize.css-->
+    <link rel = "stylesheet" href = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
+
+
+    <!--Import jQuery before materialize.js-->
+    <script type = "text/javascript" src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('select').material_select();
+        });
+    </script>
+
 </head>
 <body>
-    <h2>Guerra empezada el {{ weekday }}</h2>
+<div class = container>
+    {% if war %}
+        <h2>Guerra empezada el {{ weekday }}</h2>
 
-    <div><h4>Instrucciones:</h4>
-    Decir quién eres y con qué ejército vas a atacar.<br>
-    Si quieres cambiar el ejército pon el mismo nombre y se reemplazará<br>
-    No seáis cabrones e intentéis petar esto que lo he hecho en nada de tiempo...</div><br><br>
+        <div><h4>Instrucciones:</h4>
+            Decir quién eres y con qué ejército vas a atacar.<br>
+            Si quieres cambiar el ejército pon el mismo nombre y se reemplazará<br>
+            No seáis cabrones e intentéis petar esto que lo he hecho en nada de tiempo...
+        </div>
+        <br><br>
 
-    <form method=post>
-        {% csrf_token %}
-        Soy <input type=text name=attacker required> y voy a atacar con <input type=text name=army required>
-        <input type=submit value=Aceptar>
-    </form>
+        <h5>Indica quién eres y con qué vas a atacar:</h5>
+        <form method = post class = "col s12">
+            {% csrf_token %}
+            <input type = hidden name = form-type value = attacker>
+            <div class = row>
+                <div class = "input-field col s6">
+                    <input type = text name = attacker id = attacker required>
+                    <label for = "attacker">Soy</label>
+                </div>
+                <div class = "input-field col s6">
+                    <input type = text name = army id = army required>
+                    <label for = "army">Voy a atacar con</label>
+                </div>
+            </div>
+            <button class = "btn waves-effect waves-light" type = submit name = action>
+                Aceptar
+                <i class = "material-icons right">send</i>
+            </button>
+        </form>
 
-    <br>
-    {% for attack in attacks %}
-        {{ attack.attacker }} va a atacar con {{ attack.army }}<br>
-    {% endfor %}
+
+        <h5>Indica quién eres y qué vas a pedir:</h5>
+        <form method = post>
+            {% csrf_token %}
+            <input type = hidden name = form-type value = castle>
+            <div class = row>
+                <div class = "input-field col s6">
+                    <input type = text name = attacker id = attacker required>
+                    <label for = "attacker">Soy</label>
+                </div>
+            </div>
+            <hr>
+            <div id = "elixir_troops">
+                <div class = row>
+                    <!-- Barbarian -->
+                    <img class = "circle responsive-img col s1" src ={% static "icons/Barbarian7.png" %}/>
+                    <div class = "input-field col s1">
+                        <select name = barbarian_level>
+                            <option value = "0" selected>Nivel</option>
+                            <option value = "1">1</option>
+                            <option value = "2">2</option>
+                            <option value = "3">3</option>
+                            <option value = "4">4</option>
+                            <option value = "5">5</option>
+                            <option value = "6">6</option>
+                            <option value = "7">7</option>
+                        </select>
+                        <label for = barbarian_level">Bárbaro</label>
+                    </div>
+                    <div class = "input-field col s1">
+                        <input type = text name = barbarian_quantity id = barbarian_quantity>
+                        <label for = barbarian_quantity>Cantidad</label>
+                    </div>
+
+                    <!-- Archer -->
+                    <img class = "circle responsive-img col s1" src ={% static "icons/Archer7.png" %}/>
+                    <div class = "input-field col s1">
+                        <select name = archer_level>
+                            <option value = "0" selected>Nivel</option>
+                            <option value = "1">1</option>
+                            <option value = "2">2</option>
+                            <option value = "3">3</option>
+                            <option value = "4">4</option>
+                            <option value = "5">5</option>
+                            <option value = "6">6</option>
+                            <option value = "7">7</option>
+                        </select>
+                        <label>Arquera</label>
+                    </div>
+                    <div class = "input-field col s1">
+                        <input type = text name = archer_quantity id = archer_quantity"/>
+                        <label for = archer_quantity>Cantidad</label>
+                    </div>
+
+                    <!-- Giant -->
+                    <img class = "circle responsive-img col s1" src ={% static "icons/Giant7.png" %}/>
+                    <div class = "input-field col s1">
+                        <select name = giant_level>
+                            <option value = "0" selected>Nivel</option>
+                            <option value = "1">1</option>
+                            <option value = "2">2</option>
+                            <option value = "3">3</option>
+                            <option value = "4">4</option>
+                            <option value = "5">5</option>
+                            <option value = "6">6</option>
+                            <option value = "7">7</option>
+                        </select>
+                        <label>Gigante</label>
+                    </div>
+                    <div class = "input-field col s1">
+                        <label for = giant_quantity>Cantidad</label>
+                        <input type = text name = giant_quantity id = giant_quantity"/>
+                    </div>
+                    <!-- Goblin -->
+                    <img class = "circle responsive-img col s1" src ={% static "icons/Goblin6.png" %}/>
+                    <div class = "input-field col s1">
+                        <select name = goblin_level>
+                            <option value = "0" selected>Nivel</option>
+                            <option value = "1">1</option>
+                            <option value = "2">2</option>
+                            <option value = "3">3</option>
+                            <option value = "4">4</option>
+                            <option value = "5">5</option>
+                            <option value = "6">6</option>
+                        </select>
+                        <label>Duende</label>
+                    </div>
+                    <div class = "input-field col s1">
+                        <input type = text name = goblin_quantity id = goblin_quantity"/>
+                        <label for = goblin_quantity>Cantidad</label>
+                    </div>
+                </div>
+                <div class = row>
+
+                    <!-- Wallbreaker -->
+                    <img class = "circle responsive-img col s1" src ={% static "icons/Wall_Breaker6.png" %}/>
+                    <div class = "input-field col s1">
+                        <select name = wallbreaker_level>
+                            <option value = "0" selected>Nivel</option>
+                            <option value = "1">1</option>
+                            <option value = "2">2</option>
+                            <option value = "3">3</option>
+                            <option value = "4">4</option>
+                            <option value = "5">5</option>
+                            <option value = "6">6</option>
+                        </select>
+                        <label>Rompemuros</label>
+                    </div>
+                    <div class = "input-field col s1">
+                        <input type = text name = wallbreaker_quantity id = wallbreaker_quantity"/>
+                        <label for = wallbreaker_quantity>Cantidad</label>
+                    </div>
+
+                    <!-- Balloon -->
+                    <img class = "circle responsive-img col s1" src ={% static "icons/Balloon6.png" %}/>
+                    <div class = "input-field col s1">
+                        <select name = balloon_level>
+                            <option value = "0" selected>Nivel</option>
+                            <option value = "1">1</option>
+                            <option value = "2">2</option>
+                            <option value = "3">3</option>
+                            <option value = "4">4</option>
+                            <option value = "5">5</option>
+                            <option value = "6">6</option>
+                        </select>
+                        <label>Globo</label>
+                    </div>
+                    <div class = "input-field col s1">
+                        <input type = text name = balloon_quantity id = balloon_quantity"/>
+                        <label for = balloon_quantity>Cantidad</label>
+                    </div>
+                    <!-- Wizard -->
+                    <img class = "circle responsive-img col s1" src ={% static "icons/Wizard6.png" %}/>
+                    <div class = "input-field col s1">
+                        <select name = wizard_level>
+                            <option value = "0" selected>Nivel</option>
+                            <option value = "1">1</option>
+                            <option value = "2">2</option>
+                            <option value = "3">3</option>
+                            <option value = "4">4</option>
+                            <option value = "5">5</option>
+                            <option value = "6">6</option>
+                        </select>
+                        <label>Mago</label>
+                    </div>
+                    <div class = "input-field col s1">
+                        <input type = text name = wizard_quantity id = wizard_quantity"/>
+                        <label for = wizard_quantity>Cantidad</label>
+                    </div>
+                    <!-- Healer -->
+                    <img class = "circle responsive-img col s1" src ={% static "icons/Healer3.png" %}/>
+                    <div class = "input-field col s1">
+                        <select name = healer_level>
+                            <option value = "0" selected>Nivel</option>
+                            <option value = "1">1</option>
+                            <option value = "2">2</option>
+                            <option value = "3">3</option>
+                            <option value = "4">4</option>
+                        </select>
+                        <label>Sanadora</label>
+                    </div>
+                    <div class = "input-field col s1">
+                        <input type = text name = healer_quantity id = healer_quantity"/>
+                        <label for = healer_quantity>Cantidad</label>
+                    </div>
+                </div>
+                <div class = row>
+                    <!-- Dragon -->
+                    <img class = "circle responsive-img col s1" src ={% static "icons/Dragon5.png" %}/>
+                    <div class = "input-field col s1">
+                        <select name = dragon_level>
+                            <option value = "0" selected>Nivel</option>
+                            <option value = "1">1</option>
+                            <option value = "2">2</option>
+                            <option value = "3">3</option>
+                            <option value = "4">4</option>
+                            <option value = "5">5</option>
+                        </select>
+                        <label>Dragón</label>
+                    </div>
+                    <div class = "input-field col s1">
+                        <input type = text name = dragon_quantity id = dragon_quantity"/>
+                        <label for = dragon_quantity>Cantidad</label>
+                    </div>
+
+                    <!-- P.E.K.K.A. -->
+                    <img class = "circle responsive-img col s1" src ={% static "icons/P.E.K.K.A5.png" %}/>
+                    <div class = "input-field col s1">
+                        <select name = pekka_level>
+                            <option value = "0" selected>Nivel</option>
+                            <option value = "1">1</option>
+                            <option value = "2">2</option>
+                            <option value = "3">3</option>
+                            <option value = "4">4</option>
+                            <option value = "5">5</option>
+                        </select>
+                        <label>P.E.K.K.A.</label>
+                    </div>
+                    <div class = "input-field col s1">
+                        <input type = text name = pekka_quantity id = pekka_quantity"/>
+                        <label for = pekka_quantity>Cantidad</label>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div id = "dark_elixir_troops">
+
+                <div class = row>
+                    <!-- Minion -->
+                    <img class = "circle responsive-img col s1" src ={% static "icons/Minion7.png" %}/>
+                    <div class = "input-field col s1">
+                        <select name = minion_level>
+                            <option value = "0" selected>Nivel</option>
+                            <option value = "1">1</option>
+                            <option value = "2">2</option>
+                            <option value = "3">3</option>
+                            <option value = "4">4</option>
+                            <option value = "5">5</option>
+                            <option value = "6">6</option>
+                            <option value = "7">7</option>
+                        </select>
+                        <label for = minion_level">Esbirro</label>
+                    </div>
+                    <div class = "input-field col s1">
+                        <input type = text name = minion_quantity id = minion_quantity>
+                        <label for = minion_quantity>Cantidad</label>
+                    </div>
+
+                    <!-- Hog Rider -->
+                    <img class = "circle responsive-img col s1" src ={% static "icons/Hog_Rider5.png" %}/>
+                    <div class = "input-field col s1">
+                        <select name = hog_rider_level>
+                            <option value = "0" selected>Nivel</option>
+                            <option value = "1">1</option>
+                            <option value = "2">2</option>
+                            <option value = "3">3</option>
+                            <option value = "4">4</option>
+                            <option value = "5">5</option>
+                        </select>
+                        <label>Montapuercos</label>
+                    </div>
+                    <div class = "input-field col s1">
+                        <input type = text name = hog_rider_quantity id = hog_rider_quantity"/>
+                        <label for = hog_rider_quantity>Cantidad</label>
+                    </div>
+
+                    <!-- Valkyrie -->
+                    <img class = "circle responsive-img col s1" src ={% static "icons/Valkyrie3.png" %}/>
+                    <div class = "input-field col s1">
+                        <select name = valkyrie_level>
+                            <option value = "0" selected>Nivel</option>
+                            <option value = "1">1</option>
+                            <option value = "2">2</option>
+                            <option value = "3">3</option>
+                            <option value = "4">4</option>
+                        </select>
+                        <label>Valkiria</label>
+                    </div>
+                    <div class = "input-field col s1">
+                        <label for = giant_quantity>Cantidad</label>
+                        <input type = text name = valkyrie_quantity id = valkyrie_quantity"/>
+                    </div>
+                    <!-- Golem -->
+                    <img class = "circle responsive-img col s1" src ={% static "icons/Golem5.png" %}/>
+                    <div class = "input-field col s1">
+                        <select name = golem_level>
+                            <option value = "0" selected>Nivel</option>
+                            <option value = "1">1</option>
+                            <option value = "2">2</option>
+                            <option value = "3">3</option>
+                            <option value = "4">4</option>
+                            <option value = "5">5</option>
+                        </select>
+                        <label>Golem</label>
+                    </div>
+                    <div class = "input-field col s1">
+                        <input type = text name = golem_quantity id = golem_quantity"/>
+                        <label for = golem_quantity>Cantidad</label>
+                    </div>
+                </div>
+                <div class = row>
+                    <!-- Witch -->
+                    <img class = "circle responsive-img col s1" src ={% static "icons/Witch3.png" %}/>
+                    <div class = "input-field col s1">
+                        <select name = witch_level>
+                            <option value = "0" selected>Nivel</option>
+                            <option value = "1">1</option>
+                            <option value = "2">2</option>
+                            <option value = "3">3</option>
+                        </select>
+                        <label>Bruja</label>
+                    </div>
+                    <div class = "input-field col s1">
+                        <input type = text name = witch_quantity id = witch_quantity"/>
+                        <label for = witch_quantity>Cantidad</label>
+                    </div>
+
+                    <!-- Lava hound -->
+                    <img class = "circle responsive-img col s1" src ={% static "icons/Lava_Hound3.png" %}/>
+                    <div class = "input-field col s1">
+                        <select name = lava_hound_level>
+                            <option value = "0" selected>Nivel</option>
+                            <option value = "1">1</option>
+                            <option value = "2">2</option>
+                            <option value = "3">3</option>
+                        </select>
+                        <label>Sabueso</label>
+                    </div>
+                    <div class = "input-field col s1">
+                        <input type = text name = lava_hound_quantity id = lava_hound_quantity"/>
+                        <label for = lava_hound_quantity>Cantidad</label>
+                    </div>
+                </div>
+            </div>
+            <button class = "btn waves-effect waves-light" type = submit name = action>
+                Aceptar
+                <i class = "material-icons right">send</i>
+            </button>
+        </form>
+        </div>
+
+        <br>
+        {% for attack in attacks %}
+            <div class = row>
+                {{ attack.attacker }} va a atacar con {{ attack.army }}
+
+                {% if attack.castle %}
+                                      y va a pedir
+                    {% if attack.castle.barbarian_level != 0 %}
+                        <img class = "circle responsive-img" width = 50px height = 50px
+                             src ={% static "icons/Barbarian7.png" %}/>
+                                      x {{ attack.castle.barbarian_quantity }} de nivel
+                        {{ attack.castle.barbarian_level }}
+                    {% endif %}
+                {% endif %}
+
+            </div>
+        {% endfor %}
+    {% else %}
+        <h2>No estamos en guerra!</h2>
+
+        <div><h4>Instrucciones:</h4>
+            Decir quién eres y con qué ejército vas a atacar.<br>
+            Si quieres cambiar el ejército pon el mismo nombre y se reemplazará<br>
+            No seáis cabrones e intentéis petar esto que lo he hecho en nada de tiempo...
+        </div>
+        <br><br>
+    {% endif %}
+</div>
+
 </body>
 </html>

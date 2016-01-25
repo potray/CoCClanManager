@@ -2,16 +2,17 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 import time
 
-from ResistenciaCoC.models import War, Attack
+from ResistenciaCoC.models import War, Attack, Castle
+
+
+# Troop names
+troop_names = ['barbarian', 'archer', 'giant', 'goblin', 'wallbreaker', 'balloon', 'wizard', 'healer', 'dragon', 'pekka', 'minion', 'hog_rider', 'valkyrie', 'golem', 'witch', 'lava_hound']
 
 
 def index(request):
     # Get current date and time.
     weekday = time.strftime('%A')
     hour = time.strftime('%H')
-
-    print (weekday)
-    print (hour)
 
     current_war = None
 
@@ -54,28 +55,67 @@ def index(request):
 
     # Check if some data was sent
     if request.method == 'POST':
-        # Get the data
-        attacker = request.POST['attacker']
-        army = request.POST['army']
+        if request.POST['form-type'] == 'attacker':
+            # Get the data
+            attacker = request.POST['attacker']
+            army = request.POST['army']
 
-        # Create a new attack
-        new_attack = Attack(attacker=attacker, army=army, war=current_war)
+            # Create a new attack
+            new_attack = Attack(attacker=attacker, army=army, war=current_war)
 
-        # Check if there is an attack created by this attacker and override it.
-        previous_attack = Attack.objects.filter(war=current_war, attacker=attacker)
-        if previous_attack:
-            previous_attack[0].army = army
-            previous_attack[0].save()
-        else:
-            new_attack.save()
+            # Check if there is an attack created by this attacker and override it.
+            previous_attack = Attack.objects.filter(war=current_war, attacker=attacker)
+            if previous_attack:
+                previous_attack[0].army = army
+                previous_attack[0].save()
+            else:
+                new_attack.save()
+
+        elif request.POST['form-type'] == 'castle':
+            # Get the data
+            attacker = request.POST['attacker']
+
+            # Create the castle
+            castle = Castle()
+
+            for troop_name in troop_names:
+                quantity = request.POST[troop_name + '_quantity']
+                if not quantity:
+                    quantity = 0
+                else:
+                    quantity = int(request.POST[troop_name + '_quantity'])
+
+                setattr(castle, troop_name + '_level', int(request.POST[troop_name + '_level']))
+                setattr(castle, troop_name + '_quantity', quantity)
+
+            castle.save()
+
+            # Check if there is a castle created by this attacker and override it.
+            previous_attack = Attack.objects.filter(war=current_war, attacker=attacker)
+            if previous_attack:
+                if previous_attack[0].castle:
+                    previous_attack[0].castle.delete()
+                previous_attack[0].castle = castle
+                previous_attack[0].save()
+            else:
+                # Create a new empty attack with this castle
+                new_attack = Attack()
+                new_attack.attacker = attacker
+                new_attack.castle = castle
+                new_attack.war = current_war
+                new_attack.save()
 
     # Get template arguments
     args = {}
     if current_war:
-        # Get all the attacks in this war
-        attacks = Attack.objects.filter(war=current_war)
-        args['war'] = current_war
-        args['weekday'] = current_war.date.strftime('%A')
-        args['attacks'] = attacks
+        if not current_war.ended:
+            # Get all the attacks in this war
+            attacks = Attack.objects.filter(war=current_war)
+            args['war'] = current_war
+            args['weekday'] = current_war.date.strftime('%A')
+            args['attacks'] = attacks
+            # args['troop_names'] = troop_names
+        else:
+            args['war'] = False
 
     return render(request, 'index.html', args)
