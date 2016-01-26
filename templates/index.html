@@ -375,25 +375,141 @@
                 <i class = "material-icons right">send</i>
             </button>
         </form>
-        </div>
 
         <br>
-        {% for attack in attacks %}
-            <div class = row>
-                {{ attack.attacker }} va a atacar con {{ attack.army }}
-
-                {% if attack.castle %}
-                                      y va a pedir
-                    {% if attack.castle.barbarian_level != 0 %}
-                        <img class = "circle responsive-img" width = 50px height = 50px
-                             src ={% static "icons/Barbarian7.png" %}/>
-                                      x {{ attack.castle.barbarian_quantity }} de nivel
-                        {{ attack.castle.barbarian_level }}
+        <ul class = "collection">
+            {% for attack in attacks %}
+                <li class = collection-item>
+                    {{ attack.attacker }} va a atacar con
+                    {% if not attack.army %}
+                        {Por decidir}
                     {% endif %}
-                {% endif %}
+                    {{ attack.army }}
 
-            </div>
-        {% endfor %}
+                    {% if attack.castle %}
+                                          y va a pedir
+                        {% if attack.castle.barbarian_level != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px
+                                 src ={% static "icons/Barbarian7.png" %}/>
+                                          x {{ attack.castle.barbarian_quantity }} de nivel
+                            {{ attack.castle.barbarian_level }}
+                        {% endif %}
+                        {% if attack.castle.archer_level != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px
+                                 src ={% static "icons/Archer7.png" %}/>
+                                          x {{ attack.castle.archer_quantity }} de nivel
+                            {{ attack.castle.archer_level }}
+                        {% endif %}
+                        {% if attack.castle.giant_level != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px
+                                 src ={% static "icons/Giant7.png" %}/>
+                                          x {{ attack.castle.giant_quantity }} de nivel
+                            {{ attack.castle.giant_level }}
+                        {% endif %}
+                        {% if attack.castle.goblin_level != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px
+                                 src ={% static "icons/Goblin6.png" %}/>
+                                          x {{ attack.castle.goblin_quantity }} de nivel
+                            {{ attack.castle.goblin_level }}
+                        {% endif %}
+                        {% if attack.castle.wallbreaker_level != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px
+                                 src ={% static "icons/Wall_Breaker6.png" %}/>
+                                          x {{ attack.castle.wallbreaker_quantity }} de nivel
+                            {{ attack.castle.wallbreaker_level }}
+                        {% endif %}
+                        {% if attack.castle.balloon_level != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px
+                                 src ={% static "icons/Balloon6.png" %}/>
+                                          x {{ attack.castle.balloon_quantity }} de nivel
+                            {{ attack.castle.balloon_level }}
+                        {% endif %}
+                        {% if attack.castle.wizard_level != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px
+                                 src ={% static "icons/Wizard6.png" %}/>
+                                          x {{ attack.castle.wizard_quantity }} de nivel
+                            {{ attack.castle.wizard_level }}
+                        {% endif %}
+                        {% if attack.castle.healer_level != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px
+                                 src ={% static "icons/Healer3.png" %}/>
+                                          x {{ attack.castle.healer_quantity }} de nivel
+                            {{ attack.castle.healer_level }}
+                        {% endif %}
+                        {% if attack.castle.dragon_level != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px
+                                 src ={% static "icons/Dragon5.png" %}/>
+                                          x {{ attack.castle.dragon_quantity }} de nivel
+                            {{ attack.castle.dragon_level }}
+                        {% endif %}
+                        {% if attack.castle.pekka_level != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px
+                                 src ={% static "icons/P.E.K.K.A5.png" %}/>
+                                          x {{ attack.castle.pekka_quantity }} de nivel
+                            {{ attack.castle.pekka_level }}
+                        {% endif %}
+                        {% if attack.castle.minion_level != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px
+                                 src ={% static "icons/Minion7.png" %}/>
+                                          x {{ attack.castle.minion_quantity }} de nivel
+                            {{ attack.castle.minion_level }}
+                        {% endif %}
+                        {% if attack.castle.hog_rider_level != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px
+                                 src ={% static "icons/Hog_Rider5.png" %}/>
+                                          x {{ attack.castle.hog_rider_quantity }} de nivel
+                            {{ attack.castle.hog_rider_level }}
+                        {% endif %}
+                        {% if attack.castle.valkyrie_level != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px
+                                 src ={% static "icons/Valkyrie3.png" %}/>
+                                          x {{ attack.castle.valkyrie_quantity }} de nivel
+                            {{ attack.castle.valkyrie_level }}
+                        {% endif %}
+                        {% if attack.castle.golem_level != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px
+                                 src ={% static "icons/Golem5.png" %}/>
+                                          x {{ attack.castle.golem_quantity }} de nivel
+                            {{ attack.castle.golem_level }}
+                        {% endif %}
+                        {% if attack.castle.witch_level != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px
+                                 src ={% static "icons/Witch3.png" %}/>
+                                          x {{ attack.castle.witch_quantity }} de nivel
+                            {{ attack.castle.witch_level }}
+                        {% endif %}
+                        {% if attack.castle.lava_hound_level != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px
+                                 src ={% static "icons/Lava_Hound3.png" %}/>
+                                          x {{ attack.castle.lava_hound_quantity }} de nivel
+                            {{ attack.castle.lava_hound_level }}
+                        {% endif %}
+                                          .
+                    {% endif %}
+
+                    {% if not attack.donor %}
+                    <form method=post class = row>
+                        {% csrf_token %}
+                        <input type=hidden name=form-type value = donor>
+                        <input type=hidden name=attack-id value = {{ attack.id }}>
+                        <div class = "input-field col s3">
+                            <input type = text name = donor id = donor required>
+                            <label for = "donor">Pon tu nombre para donar</label>
+                        </div>
+                        <div class = "input-field col s3">
+                            <button class = "btn waves-effect waves-light" type = submit name = action>
+                                Yo lo dono!
+                                <i class = "material-icons right">send</i>
+                            </button>
+                        </div>
+                    </form>
+                    {% else %}
+                        <b>{{ attack.donor }}</b> se lo va a donar.
+                                          <i class="material-icons light-green-text text-accent-3">thumb_up</i>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
     {% else %}
         <h2>No estamos en guerra!</h2>
 

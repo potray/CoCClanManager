@@ -5,6 +5,7 @@ class War(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     ended = models.BooleanField(default=False)
 
+
 class Castle(models.Model):
     barbarian_quantity = models.IntegerField()
     barbarian_level = models.IntegerField()
@@ -43,7 +44,6 @@ class Castle(models.Model):
 class Attack(models.Model):
     attacker = models.CharField(max_length=100)
     army = models.CharField(max_length=100)
+    donor = models.CharField(max_length=100, null=True)
     war = models.ForeignKey(War)
     castle = models.ForeignKey(Castle, null=True)
-    
-

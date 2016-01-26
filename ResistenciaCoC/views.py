@@ -105,6 +105,12 @@ def index(request):
                 new_attack.war = current_war
                 new_attack.save()
 
+        elif request.POST['form-type'] == 'donor':
+            print 'donor!'
+            # Get the attack
+            attack = Attack.objects.get(id=request.POST['attack-id'])
+            attack.donor = request.POST['donor']
+            attack.save()
     # Get template arguments
     args = {}
     if current_war:
