@@ -113,7 +113,8 @@ def index(request):
             attacks = Attack.objects.filter(war=current_war)
             args['war'] = current_war
             args['weekday'] = current_war.date.strftime('%A')
-            args['attacks'] = attacks
+            if attacks:
+                args['attacks'] = attacks
             # args['troop_names'] = troop_names
         else:
             args['war'] = False
