@@ -427,11 +427,11 @@
                         {% csrf_token %}
                         <input type=hidden name=form-type value = donor>
                         <input type=hidden name=attack-id value = {{ attack.id }}>
-                        <div class = "input-field col s3">
+                        <div class = "input-field col l3 s6">
                             <input type = text name = donor id = donor required>
                             <label for = "donor">Pon tu nombre para donar</label>
                         </div>
-                        <div class = "input-field col s3">
+                        <div class = "input-field col l3 s6">
                             <button class = "btn waves-effect waves-light" type = submit name = action>
                                 Yo lo dono!
                                 <i class = "material-icons right">send</i>
