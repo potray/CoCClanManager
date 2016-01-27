@@ -6,7 +6,7 @@ from ResistenciaCoC.models import War, Attack, Castle
 
 
 # Troop names
-troop_names = ['barbarian', 'archer', 'giant', 'goblin', 'wallbreaker', 'balloon', 'wizard', 'healer', 'dragon', 'pekka', 'minion', 'hog_rider', 'valkyrie', 'golem', 'witch', 'lava_hound']
+troop_names = ['barbarian', 'archer', 'giant', 'goblin', 'wall_breaker', 'balloon', 'wizard', 'healer', 'dragon', 'pekka', 'minion', 'hog_rider', 'valkyrie', 'golem', 'witch', 'lava_hound']
 
 
 def index(request):
@@ -79,13 +79,14 @@ def index(request):
             castle = Castle()
 
             for troop_name in troop_names:
-                quantity = request.POST[troop_name + '_quantity']
+                quantity = request.POST.get(troop_name + '_quantity')
+                print quantity
                 if not quantity:
                     quantity = 0
                 else:
-                    quantity = int(request.POST[troop_name + '_quantity'])
-
-                setattr(castle, troop_name + '_level', int(request.POST[troop_name + '_level']))
+                    quantity = int(quantity)
+                # troop_max_needed = request.POST.get(troop_name + '_max_needed', False)
+                setattr(castle, troop_name + '_max_needed', request.POST.get(troop_name + '_max_needed', False))
                 setattr(castle, troop_name + '_quantity', quantity)
 
             castle.save()
