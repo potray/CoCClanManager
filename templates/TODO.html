@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+
+<html lang = "en">
+<head>
+    {% load staticfiles %}
+    <meta charset = "UTF-8">
+    <!--Let browser know website is optimized for mobile-->
+    <meta name = "viewport" content = "width=device-width, initial-scale=1.0"/>
+    <title>Resistencia CoC</title>
+    <!--Import Google Icon Font-->
+    <link href = "http://fonts.googleapis.com/icon?family=Material+Icons" rel = "stylesheet"/>
+    <!--Import materialize.css-->
+    <link rel = "stylesheet" href = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
+
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <!--Import jQuery before materialize.js-->
+    <script type = "text/javascript" src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('select').material_select();
+        });
+    </script>
+
+</head>
+<body>
+<div class = container>
+    {% if war %}
+        <h2>Guerra empezada el {{ weekday }}</h2>
+
+        <div><h4>Instrucciones:</h4>
+            Para indicar con qué vas a atacar, usa el primer formulario.<br>
+            Para pedir un castillo, usad el segundo formulario, indicad a la derecha de cada tropa cuántos queréis y si lo queréis de nivel máximo o no.<br>
+            Si quieres cambiar el ejército o lo que has pedido pon el mismo nombre y se reemplazará<br>
+            Para comprometerse a donar, abajo poned vuestro nombre y pulsad "Yo lo dono!.<br>
+            Las tropas que no se piden de nivel máximo su icono sale de nivel 1, las que sí salen de nivel máximo.<br>
+            No seáis cabrones e intentéis petar esto que lo he hecho en nada de tiempo...
+        </div>
+        <br><br>
+
+        <h5>Indica quién eres y con qué vas a atacar:</h5>
+        <form method = post class = "col s12">
+            {% csrf_token %}
+            <input type = hidden name = form-type value = attacker>
+            <div class = row>
+                <div class = "input-field col s6">
+                    <input type = text name = attacker id = attacker required>
+                    <label for = "attacker">Soy</label>
+                </div>
+                <div class = "input-field col s6">
+                    <input type = text name = army id = army required>
+                    <label for = "army">Voy a atacar con</label>
+                </div>
+            </div>
+            <button class = "btn waves-effect waves-light" type = submit name = action>
+                Aceptar
+                <i class = "material-icons right">send</i>
+            </button>
+        </form>
+
+
+        <h5>Indica quién eres y qué vas a pedir:</h5>
+        <form method = post>
+            {% csrf_token %}
+            <input type = hidden name = form-type value = castle>
+            <div class = row>
+                <div class = "input-field col s6">
+                    <input type = text name = attacker id = attacker required>
+                    <label for = "attacker">Soy</label>
+                </div>
+            </div>
+            <div class=divider></div>
+            <div id = "elixir_troops" class = row>
+                <!-- Barbarian -->
+                    <img class = "circle responsive-img col l1 s2" src ={% static "icons/Barbarian_max.png" %}/>
+                    <div class = "input-field col l1 s2">
+                        <div class=row>
+                            <input type = number name = barbarian_quantity id = barbarian_quantity />
+                            <label for = barbarian_quantity>Cantidad</label>
+                        </div>
+                        <div class=row>
+                            <input type = checkbox id = barbarian_max_needed name = barbarian_max_needed />
+                            <label for = barbarian_max_needed>Máx</label>
+                        </div>
+                    </div>
+                <img class = "circle responsive-img col l1 s2" src ={% static "icons/Archer_max.png" %}/>
+                <div class = "input-field col l1 s2">
+                    <div class=row>
+                        <input type = number name = archer_quantity id = archer_quantity />
+                        <label for = archer_quantity>Cantidad</label>
+                    </div>
+                    <div class=row>
+                        <input type = checkbox id = archer_max_needed name = archer_max_needed />
+                        <label for = archer_max_needed>Máx</label>
+                    </div>
+                </div>
+                <img class = "circle responsive-img col l1 s2" src ={% static "icons/Giant_max.png" %}/>
+                <div class = "input-field col l1 s2">
+                    <div class=row>
+                        <input type = number name = giant_quantity id = giant_quantity />
+                        <label for = giant_quantity>Cantidad</label>
+                    </div>
+                    <div class=row>
+                        <input type = checkbox id = giant_max_needed name = giant_max_needed />
+                        <label for = giant_max_needed>Máx</label>
+                    </div>
+                </div>
+                <img class = "circle responsive-img col l1 s2" src ={% static "icons/Goblin_max.png" %}/>
+                <div class = "input-field col l1 s2">
+                    <div class=row>
+                        <input type = number name = goblin_quantity id = goblin_quantity />
+                        <label for = goblin_quantity>Cantidad</label>
+                    </div>
+                    <div class=row>
+                        <input type = checkbox id = goblin_max_needed name = goblin_max_needed />
+                        <label for = goblin_max_needed>Máx</label>
+                    </div>
+                </div>
+                <img class = "circle responsive-img col l1 s2" src ={% static "icons/Wall_Breaker_max.png" %}/>
+                <div class = "input-field col l1 s2">
+                    <div class=row>
+                        <input type = number name = wall_breaker_quantity id = wall_breaker_quantity />
+                        <label for = wall_breaker_quantity>Cantidad</label>
+                    </div>
+                    <div class=row>
+                        <input type = checkbox id = wall_breaker_max_needed name = wall_breaker_max_needed />
+                        <label for = wall_breaker_max_needed>Máx</label>
+                    </div>
+                </div>
+                <img class = "circle responsive-img col l1 s2" src ={% static "icons/Balloon_max.png" %}/>
+                <div class = "input-field col l1 s2">
+                    <div class=row>
+                        <input type = number name = balloon_quantity id = balloon_quantity />
+                        <label for = balloon_quantity>Cantidad</label>
+                    </div>
+                    <div class=row>
+                        <input type = checkbox id = balloon_max_needed name = balloon_max_needed />
+                        <label for = balloon_max_needed>Máx</label>
+                    </div>
+                </div>
+                <img class = "circle responsive-img col l1 s2" src ={% static "icons/Wizard_max.png" %}/>
+                <div class = "input-field col l1 s2">
+                    <div class=row>
+                        <input type = number name = wizard_quantity id = wizard_quantity />
+                        <label for = wizard_quantity>Cantidad</label>
+                    </div>
+                    <div class=row>
+                        <input type = checkbox id = wizard_max_needed name = wizard_max_needed />
+                        <label for = wizard_max_needed>Máx</label>
+                    </div>
+                </div>
+                <img class = "circle responsive-img col l1 s2" src ={% static "icons/Healer_max.png" %}/>
+                <div class = "input-field col l1 s2">
+                    <div class=row>
+                        <input type = number name = healer_quantity id = healer_quantity />
+                        <label for = healer_quantity>Cantidad</label>
+                    </div>
+                    <div class=row>
+                        <input type = checkbox id = healer_max_needed name = healer_max_needed />
+                        <label for = healer_max_needed>Máx</label>
+                    </div>
+                </div>
+                <img class = "circle responsive-img col l1 s2" src ={% static "icons/Dragon_max.png" %}/>
+                <div class = "input-field col l1 s2">
+                    <div class=row>
+                        <input type = number name = dragon_quantity id = dragon_quantity />
+                        <label for = dragon_quantity>Cantidad</label>
+                    </div>
+                    <div class=row>
+                        <input type = checkbox id = dragon_max_needed name = dragon_max_needed />
+                        <label for = dragon_max_needed>Máx</label>
+                    </div>
+                </div>
+                <img class = "circle responsive-img col l1 s2" src ={% static "icons/P.E.K.K.A_max.png" %}/>
+                <div class = "input-field col l1 s2">
+                    <div class=row>
+                        <input type = number name = pekka_quantity id = pekka_quantity />
+                        <label for = pekka_quantity>Cantidad</label>
+                    </div>
+                    <div class=row>
+                        <input type = checkbox id = pekka_max_needed name = pekka_max_needed />
+                        <label for = pekka_max_needed>Máx</label>
+                    </div>
+                </div>
+            </div>
+            <div class=divider></div>
+            <div class=row id=dark_elixir_troops>
+                <img class = "circle responsive-img col l1 s2" src ={% static "icons/Minion_max.png" %}/>
+                <div class = "input-field col l1 s2">
+                    <div class=row>
+                        <input type = number name = minion_quantity id = minion_quantity />
+                        <label for = minion_quantity>Cantidad</label>
+                    </div>
+                    <div class=row>
+                        <input type = checkbox id = minion_max_needed name = minion_max_needed />
+                        <label for = minion_max_needed>Máx</label>
+                    </div>
+                </div>
+                <img class = "circle responsive-img col l1 s2" src ={% static "icons/Hog_Rider_max.png" %}/>
+                <div class = "input-field col l1 s2">
+                    <div class=row>
+                        <input type = number name = hog_rider_quantity id = hog_rider_quantity />
+                        <label for = hog_rider_quantity>Cantidad</label>
+                    </div>
+                    <div class=row>
+                        <input type = checkbox id = hog_rider_max_needed name = hog_rider_max_needed />
+                        <label for = hog_rider_max_needed>Máx</label>
+                    </div>
+                </div>
+                <img class = "circle responsive-img col l1 s2" src ={% static "icons/Valkyrie_max.png" %}/>
+                <div class = "input-field col l1 s2">
+                    <div class=row>
+                        <input type = number name = valkyrie_quantity id = valkyrie_quantity />
+                        <label for = valkyrie_quantity>Cantidad</label>
+                    </div>
+                    <div class=row>
+                        <input type = checkbox id = valkyrie_max_needed name = valkyrie_max_needed />
+                        <label for = valkyrie_max_needed>Máx</label>
+                    </div>
+                </div>
+                <img class = "circle responsive-img col l1 s2" src ={% static "icons/Golem_max.png" %}/>
+                <div class = "input-field col l1 s2">
+                    <div class=row>
+                        <input type = number name = golem_quantity id = golem_quantity />
+                        <label for = golem_quantity>Cantidad</label>
+                    </div>
+                    <div class=row>
+                        <input type = checkbox id = golem_max_needed name = golem_max_needed />
+                        <label for = golem_max_needed>Máx</label>
+                    </div>
+                </div>
+                <img class = "circle responsive-img col l1 s2" src ={% static "icons/Witch_max.png" %}/>
+                <div class = "input-field col l1 s2">
+                    <div class=row>
+                        <input type = number name = witch_quantity id = witch_quantity />
+                        <label for = witch_quantity>Cantidad</label>
+                    </div>
+                    <div class=row>
+                        <input type = checkbox id = witch_max_needed name = witch_max_needed />
+                        <label for = witch_max_needed>Máx</label>
+                    </div>
+                </div>
+                <img class = "circle responsive-img col l1 s2" src ={% static "icons/Lava_Hound_max.png" %}/>
+                <div class = "input-field col l1 s2">
+                    <div class=row>
+                        <input type = number name = lava_hound_quantity id = lava_hound_quantity />
+                        <label for = lava_hound_quantity>Cantidad</label>
+                    </div>
+                    <div class=row>
+                        <input type = checkbox id = lava_hound_max_needed name = lava_hound_max_needed />
+                        <label for = lava_hound_max_needed>Máx</label>
+                    </div>
+                </div>
+            </div>
+        <button class = "btn waves-effect waves-light" type = submit name = action>
+            Aceptar
+            <i class = "material-icons right">send</i>
+        </button>
+        </form>
+
+        <br>
+        <ul class = "collection">
+            {% for attack in attacks %}
+                <li class = collection-item>
+                    {{ attack.attacker }} va a atacar con
+                    {% if not attack.army %}
+                        {Por decidir}
+                    {% endif %}
+                    {{ attack.army }}
+
+                    {% if attack.castle %}
+                                          y va a pedir
+                        {% if attack.castle.barbarian_quantity != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px src =
+                                    {% if attack.castle.barbarian_max_needed %}
+                                        {% static "icons/Barbarian_max.png" %}/>
+                                    {% else %}
+                                        {% static "icons/Barbarian_min.png" %}/>
+                                    {% endif %}
+                                          x {{ attack.castle.barbarian_quantity }}
+                        {% endif %}
+                        {% if attack.castle.archer_quantity != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px src =
+                                    {% if attack.castle.archer_max_needed %}
+                                        {% static "icons/Archer_max.png" %}/>
+                                    {% else %}
+                                        {% static "icons/Archer_min.png" %}/>
+                                    {% endif %}
+                                          x {{ attack.castle.archer_quantity }}
+                        {% endif %}
+                        {% if attack.castle.giant_quantity != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px src =
+                                    {% if attack.castle.giant_max_needed %}
+                                        {% static "icons/Giant_max.png" %}/>
+                                    {% else %}
+                                        {% static "icons/Giant_min.png" %}/>
+                                    {% endif %}
+                                          x {{ attack.castle.giant_quantity }}
+                        {% endif %}
+                        {% if attack.castle.goblin_quantity != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px src =
+                                    {% if attack.castle.goblin_max_needed %}
+                                        {% static "icons/Goblin_max.png" %}/>
+                                    {% else %}
+                                        {% static "icons/Goblin_min.png" %}/>
+                                    {% endif %}
+                                          x {{ attack.castle.goblin_quantity }}
+                        {% endif %}
+                        {% if attack.castle.wall_breaker_quantity != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px src =
+                                    {% if attack.castle.wall_breaker_max_needed %}
+                                        {% static "icons/Wall_Breaker_max.png" %}/>
+                                    {% else %}
+                                        {% static "icons/Wall_Breaker_min.png" %}/>
+                                    {% endif %}
+                                          x {{ attack.castle.wall_breaker_quantity }}
+                        {% endif %}
+                        {% if attack.castle.balloon_quantity != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px src =
+                                    {% if attack.castle.balloon_max_needed %}
+                                        {% static "icons/Balloon_max.png" %}/>
+                                    {% else %}
+                                        {% static "icons/Balloon_min.png" %}/>
+                                    {% endif %}
+                                          x {{ attack.castle.balloon_quantity }}
+                        {% endif %}
+                        {% if attack.castle.wizard_quantity != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px src =
+                                    {% if attack.castle.wizard_max_needed %}
+                                        {% static "icons/Wizard_max.png" %}/>
+                                    {% else %}
+                                        {% static "icons/Wizard_min.png" %}/>
+                                    {% endif %}
+                                          x {{ attack.castle.wizard_quantity }}
+                        {% endif %}
+                        {% if attack.castle.healer_quantity != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px src =
+                                    {% if attack.castle.healer_max_needed %}
+                                        {% static "icons/Healer_max.png" %}/>
+                                    {% else %}
+                                        {% static "icons/Healer_min.png" %}/>
+                                    {% endif %}
+                                          x {{ attack.castle.healer_quantity }}
+                        {% endif %}
+                        {% if attack.castle.dragon_quantity != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px src =
+                                    {% if attack.castle.dragon_max_needed %}
+                                        {% static "icons/Dragon_max.png" %}/>
+                                    {% else %}
+                                        {% static "icons/Dragon_min.png" %}/>
+                                    {% endif %}
+                                          x {{ attack.castle.dragon_quantity }}
+                        {% endif %}
+                        {% if attack.castle.pekka_quantity != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px src =
+                                    {% if attack.castle.pekka_max_needed %}
+                                        {% static "icons/P.E.K.K.A_max.png" %}/>
+                                    {% else %}
+                                        {% static "icons/P.E.K.K.A_min.png" %}/>
+                                    {% endif %}
+                                          x {{ attack.castle.pekka_quantity }}
+                        {% endif %}
+                        {% if attack.castle.minion_quantity != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px src =
+                                    {% if attack.castle.minion_max_needed %}
+                                        {% static "icons/Minion_max.png" %}/>
+                                    {% else %}
+                                        {% static "icons/Minion_min.png" %}/>
+                                    {% endif %}
+                                          x {{ attack.castle.minion_quantity }}
+                        {% endif %}
+                        {% if attack.castle.hog_rider_quantity != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px src =
+                                    {% if attack.castle.hog_rider_max_needed %}
+                                        {% static "icons/Hog_rider_max.png" %}/>
+                                    {% else %}
+                                        {% static "icons/Hog_rider_min.png" %}/>
+                                    {% endif %}
+                                          x {{ attack.castle.hog_rider_quantity }}
+                        {% endif %}
+                        {% if attack.castle.valkyrie_quantity != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px src =
+                                    {% if attack.castle.valkyrie_max_needed %}
+                                        {% static "icons/Valkyrie_max.png" %}/>
+                                    {% else %}
+                                        {% static "icons/Valkyrie_min.png" %}/>
+                                    {% endif %}
+                                          x {{ attack.castle.valkyrie_quantity }}
+                        {% endif %}
+                        {% if attack.castle.golem_quantity != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px src =
+                                    {% if attack.castle.golem_max_needed %}
+                                        {% static "icons/Golem_max.png" %}/>
+                                    {% else %}
+                                        {% static "icons/Golem_min.png" %}/>
+                                    {% endif %}
+                                          x {{ attack.castle.golem_quantity }}
+                        {% endif %}
+                        {% if attack.castle.witch_quantity != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px src =
+                                    {% if attack.castle.witch_max_needed %}
+                                        {% static "icons/Witch_max.png" %}/>
+                                    {% else %}
+                                        {% static "icons/Witch_min.png" %}/>
+                                    {% endif %}
+                                          x {{ attack.castle.witch_quantity }}
+                        {% endif %}
+                        {% if attack.castle.lava_hound_quantity != 0 %}
+                            <img class = "circle responsive-img" width = 50px height = 50px src =
+                                    {% if attack.castle.lava_hound_max_needed %}
+                                        {% static "icons/Lava_hound_max.png" %}/>
+                                    {% else %}
+                                        {% static "icons/Lava_hound_min.png" %}/>
+                                    {% endif %}
+                                          x {{ attack.castle.lava_hound_quantity }}
+                        {% endif %}
+
+                                          .
+                    {% endif %}
+
+                    {% if not attack.donor %}
+                    <form method=post class = row>
+                        {% csrf_token %}
+                        <input type=hidden name=form-type value = donor>
+                        <input type=hidden name=attack-id value = {{ attack.id }}>
+                        <div class = "input-field col l3 s6">
+                            <input type = text name = donor id = donor required>
+                            <label for = "donor">Pon tu nombre para donar</label>
+                        </div>
+                        <div class = "input-field col l3 s6">
+                            <button class = "btn waves-effect waves-light" type = submit name = action>
+                                Yo lo dono!
+                                <i class = "material-icons right">send</i>
+                            </button>
+                        </div>
+                    </form>
+                    {% else %}
+                        <b>{{ attack.donor }}</b> se lo va a donar.
+                                          <i class="material-icons light-green-text text-accent-3">thumb_up</i>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <h2>No estamos en guerra!</h2>
+
+        <div><h4>Instrucciones:</h4>
+            Para indicar con qué vas a atacar, usa el primer formulario.<br>
+            Para pedir un castillo, usad el segundo formulario, indicad a la derecha de cada tropa cuántos queréis y si lo queréis de nivel máximo o no.<br>
+            Si quieres cambiar el ejército o lo que has pedido pon el mismo nombre y se reemplazará<br>
+            Para comprometerse a donar, abajo poned vuestro nombre y pulsad "Yo lo dono!.<br>
+            Las tropas que no se piden de nivel máximo su icono sale de nivel 1, las que sí salen de nivel máximo.<br>
+            No seáis cabrones e intentéis petar esto que lo he hecho en nada de tiempo...
+        </div>
+        <br><br>
+    {% endif %}
+</div>
+</body>
+</html>

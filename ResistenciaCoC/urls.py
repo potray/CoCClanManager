@@ -19,6 +19,13 @@ from django.contrib import admin
 from ResistenciaCoC import views
 
 urlpatterns = [
+    url(r'^$', views.index),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^', views.index),
+    url(r'^login/', views.index),
+    url(r'^accounts/login/$', views.index),
+    url(r'^logout/', views.user_logout),
+    url(r'^registration/', views.registration),
+    url(r'^index_logged_in/', views.index_logged_in),
+
+
 ]

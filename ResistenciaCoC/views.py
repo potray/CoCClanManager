@@ -1,15 +1,19 @@
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login, logout
+from django.contrib.auth.hashers import make_password
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 import time
 
+from ResistenciaCoC.forms import RegistrationForm, LoginForm
 from ResistenciaCoC.models import War, Attack, Castle
 
-
 # Troop names
-troop_names = ['barbarian', 'archer', 'giant', 'goblin', 'wall_breaker', 'balloon', 'wizard', 'healer', 'dragon', 'pekka', 'minion', 'hog_rider', 'valkyrie', 'golem', 'witch', 'lava_hound']
+troop_names = ['barbarian', 'archer', 'giant', 'goblin', 'wall_breaker', 'balloon', 'wizard', 'healer', 'dragon',
+               'pekka', 'minion', 'hog_rider', 'valkyrie', 'golem', 'witch', 'lava_hound']
 
 
-def index(request):
+def todo(request):
     # Get current date and time.
     weekday = time.strftime('%A')
     hour = time.strftime('%H')
@@ -122,8 +126,49 @@ def index(request):
             args['weekday'] = current_war.date.strftime('%A')
             if attacks:
                 args['attacks'] = attacks
-            # args['troop_names'] = troop_names
         else:
             args['war'] = False
 
     return render(request, 'index.html', args)
+
+
+def index(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            user = form.login(request)
+            if user:
+                login(request, user)
+                return HttpResponseRedirect('/index_logged_in')
+            else:
+                print"no"
+    else:
+        form = LoginForm()
+    return render(request, 'index.html', {'form': form})
+
+
+def registration(request):
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            # Hash the password.
+            print form.cleaned_data
+            newUser = form.instance
+            newUser.password = make_password(newUser.password)
+            newUser.email = newUser.username
+            newUser.save()
+            return HttpResponseRedirect('/')
+    else:
+        form = RegistrationForm()
+    return render(request, 'registration.html', {'form': form})
+
+
+@login_required
+def user_logout(request):
+    logout(request)
+    return HttpResponseRedirect('/')
+
+
+@login_required
+def index_logged_in(request):
+    return render(request, 'index_logged_in.html')
