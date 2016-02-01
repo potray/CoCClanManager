@@ -1,0 +1,27 @@
+{% extends "base_logged_in.html" %}
+
+{% block title %}{{ clan.name }}{% endblock title %}
+{% block content %}
+    <h2>{{ clan.name }}</h2>
+    {% if not clan.is_at_war %}
+        El clan actualmente no está en una guerra.
+        <form method="POST" action="">
+            {% csrf_token %}
+            <input type=hidden name=form_type value=start_war>
+            <button type=submit class="btn waves-effect waves-light">¡Guerra!</button>
+        </form>
+        <h3>Miembros:</h3>
+        <ul class=collection>
+        {% for member in clan_members %}
+            <li class=collection-item>{{ member.first_name }}</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <h4>¡Guerra!</h4>
+        <form method="POST" action="">
+            {% csrf_token %}
+            <input type=hidden name=form_type value=end_war>
+            <button type=submit class="btn waves-effect waves-light">Terminar guerra</button>
+        </form>
+    {% endif %}
+{% endblock content %}

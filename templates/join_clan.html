@@ -1,0 +1,12 @@
+{% extends "base_logged_in.html" %}
+
+{% block title %}Unirse a un clan{% endblock title %}
+{% block content %}
+    <form action='' method=get>
+        {% csrf_token %}
+        <div class=input-field>
+            <i class="material-icons prefix">search</i>
+            <input type=text>
+        </div>
+    </form>
+{% endblock content %}

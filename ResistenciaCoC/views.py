@@ -6,7 +6,7 @@ from django.shortcuts import render
 import time
 
 from ResistenciaCoC.forms import RegistrationForm, LoginForm, CreateClanForm
-from ResistenciaCoC.models import War, Attack, Castle
+from ResistenciaCoC.models import War, Attack, Castle, Clan
 
 # Troop names
 troop_names = ['barbarian', 'archer', 'giant', 'goblin', 'wall_breaker', 'balloon', 'wizard', 'healer', 'dragon',
@@ -153,8 +153,6 @@ def index(request):
             if user:
                 login(request, user)
                 return index_logged_in(request)
-            else:
-                print"no"
     else:
         # Check if there is a logged in user
         if request.user.username != '':
@@ -203,5 +201,27 @@ def create_clan(request):
 
     return render(request, 'create_clan.html', {'form': form})
 
+@login_required
 def join_clan(request):
-    return None
+    return render(request, 'join_clan.html')
+
+@login_required
+def clan(request):
+    # Get clan data and render the page.
+    clan = Clan.objects.get(tag = request.GET['tag'])
+
+    if request.method == 'POST':
+        form_type = request.POST['form_type']
+
+        # Start the war.
+        if form_type == 'start_war':
+            clan.is_at_war = True
+            clan.save()
+
+        # End the war.
+        elif form_type == 'end_war':
+            clan.is_at_war = False
+            clan.save()
+
+    return render(request, 'clan.html', {'clan': clan,
+                                         'clan_members': clan.members.all()})

@@ -54,5 +54,10 @@ class Clan(models.Model):
     name = models.CharField(max_length=100)
     tag = models.CharField(max_length=8, unique=True)
     admin = models.ForeignKey(User, related_name='clan_admin')
+    is_at_war = models.BooleanField(default=False)
     managers = models.ManyToManyField(User, related_name='clan_manager')
     members = models.ManyToManyField(User, related_name='clan_member')
+
+class Member_request(models.Model):
+    clan = models.OneToOneField(Clan)
+    user = models.OneToOneField(User)
