@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -47,3 +48,11 @@ class Attack(models.Model):
     donor = models.CharField(max_length=100, null=True)
     war = models.ForeignKey(War)
     castle = models.ForeignKey(Castle, null=True)
+
+
+class Clan(models.Model):
+    name = models.CharField(max_length=100)
+    tag = models.CharField(max_length=8, unique=True)
+    admin = models.ForeignKey(User, related_name='clan_admin')
+    managers = models.ManyToManyField(User, related_name='clan_manager')
+    members = models.ManyToManyField(User, related_name='clan_member')

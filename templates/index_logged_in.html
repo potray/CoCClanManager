@@ -1,4 +1,12 @@
 {% extends "base_logged_in.html" %}
 
 {% block title %}Bienvenido{% endblock title %}
-{% block content %}Logueado{% endblock content %}
+{% block content %}
+    Bienvenido {{ user.first_name }}.<br>
+
+    {% if  clan_membership == 'no_clan'%}
+        Actualmente no perteneces a ningún clan. <a href=join_clan>Únete a uno</a> o <a href=create_clan>créalo.</a>
+    {% endif %}
+
+
+{% endblock content %}

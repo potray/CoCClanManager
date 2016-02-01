@@ -26,6 +26,8 @@ urlpatterns = [
     url(r'^logout/', views.user_logout),
     url(r'^registration/', views.registration),
     url(r'^index_logged_in/', views.index_logged_in),
+    url(r'^create_clan/', views.create_clan),
+    url(r'^join_clan/', views.join_clan),
 
 
 ]

@@ -1,9 +1,12 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 from django import forms
 
 from django.utils.translation import ugettext_lazy as _
+
+from ResistenciaCoC.models import Clan
 
 
 class LoginForm(forms.Form):
@@ -34,14 +37,16 @@ class RegistrationForm(ModelForm):
 
     class Meta:
         model = User
-        fields = ('username', 'password')
+        fields = ('username', 'password', 'first_name')
 
         widgets = {
             'password': forms.PasswordInput(),
             'username': forms.EmailInput(),
+
         }
         labels = {
             'username': 'Email',
+            'first_name': 'Nombre en el juego',
         }
         error_messages = {
             'username': {
@@ -63,3 +68,29 @@ class RegistrationForm(ModelForm):
                     code='password_mismatch',
             )
         return password2
+
+class CreateClanForm (ModelForm):
+
+    class Meta:
+        model = Clan
+
+        fields = ('name', 'tag')
+
+        error_messages = {
+            'tag': {
+                'unique': _('This clan tag is already taken.'),
+            }
+        }
+
+    # Check if there is already a clan with this tag.
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        if Clan.objects.filter(tag=cleaned_data['tag']).exists():
+            raise ValidationError(_('This clan tag is already taken.'))
+
+        print cleaned_data['tag']
+
+        if len(cleaned_data['tag']) != 8:
+            raise ValidationError(_('The clan tag must have 8 characters.'))
+
+        return cleaned_data

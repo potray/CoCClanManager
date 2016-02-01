@@ -1,0 +1,10 @@
+{% extends "base_logged_in.html" %}
+
+{% block title %}Crear Clan{% endblock title %}
+{% block content %}
+    <form action = "" method = "post">
+        {% csrf_token %}
+        {{ form }}
+        <button type = submit class = "btn waves-effect waves-light">Crear</button>
+    </form>
+{% endblock content %}

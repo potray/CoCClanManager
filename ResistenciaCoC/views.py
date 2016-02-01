@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 import time
 
-from ResistenciaCoC.forms import RegistrationForm, LoginForm
+from ResistenciaCoC.forms import RegistrationForm, LoginForm, CreateClanForm
 from ResistenciaCoC.models import War, Attack, Castle
 
 # Troop names
@@ -132,6 +132,19 @@ def todo(request):
     return render(request, 'index.html', args)
 
 
+@login_required
+def index_logged_in(request):
+    # Get user clan info
+    user = request.user
+    clan_member = user.clan_member.all()
+    if clan_member.count() == 0:
+        clan_membership = 'no_clan'
+    else:
+        clan_membership = clan_member
+    return render(request, 'index_logged_in.html', {'clan_membership': clan_membership,
+                                                    'user': user,})
+
+
 def index(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -139,10 +152,13 @@ def index(request):
             user = form.login(request)
             if user:
                 login(request, user)
-                return HttpResponseRedirect('/index_logged_in')
+                return index_logged_in(request)
             else:
                 print"no"
     else:
+        # Check if there is a logged in user
+        if request.user.username != '':
+            return index_logged_in(request)
         form = LoginForm()
     return render(request, 'index.html', {'form': form})
 
@@ -153,10 +169,9 @@ def registration(request):
         if form.is_valid():
             # Hash the password.
             print form.cleaned_data
-            newUser = form.instance
-            newUser.password = make_password(newUser.password)
-            newUser.email = newUser.username
-            newUser.save()
+            new_user = form.instance
+            new_user.password = make_password(new_user.password)
+            new_user.save()
             return HttpResponseRedirect('/')
     else:
         form = RegistrationForm()
@@ -170,5 +185,23 @@ def user_logout(request):
 
 
 @login_required
-def index_logged_in(request):
-    return render(request, 'index_logged_in.html')
+def create_clan(request):
+    if request.method == 'POST':
+        form = CreateClanForm(request.POST)
+        if form.is_valid():
+            # Save the clan
+            new_clan = form.instance
+            # The creator is the admin.
+            new_clan.admin = request.user
+            new_clan.save()
+            # The creator is also a member! We need to do this after saving because many to many relationships.
+            new_clan.members.add(request.user)
+            new_clan.save()
+            return index_logged_in(request)
+    else:
+        form = CreateClanForm()
+
+    return render(request, 'create_clan.html', {'form': form})
+
+def join_clan(request):
+    return None
