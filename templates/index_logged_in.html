@@ -1,13 +1,13 @@
 {% extends "base_logged_in.html" %}
 
-{% block title %}Bienvenido{% endblock title %}
+{% block title %}Welcome{% endblock title %}
 {% block content %}
-    Bienvenido {{ user.first_name }}.<br>
+    Welcome {{ user.first_name }}.<br>
 
     {% if  clan_membership == 'no_clan'%}
-        Actualmente no perteneces a ningún clan. <a href=join_clan>Únete a uno</a> o <a href=create_clan>créalo.</a>
+        You don't belong to any clan. <a href=join_clan>Create</a> or <a href=create_clan>join</a> one.
     {% else %}
-        <h5>Clanes a los que perteneces:</h5>
+        <h5>Clans you belong to:</h5>
         <div class=collection>
         {% for clan in clan_membership %}
             <a href="/clan?tag={{ clan.tag }}" class=collection-item>{{ clan.name }}</a>

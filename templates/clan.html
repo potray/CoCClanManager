@@ -4,24 +4,24 @@
 {% block content %}
     <h2>{{ clan.name }}</h2>
     {% if not clan.is_at_war %}
-        El clan actualmente no está en una guerra.
+        The clan isn't at war right now.
         <form method="POST" action="">
             {% csrf_token %}
             <input type=hidden name=form_type value=start_war>
-            <button type=submit class="btn waves-effect waves-light">¡Guerra!</button>
+            <button type=submit class="btn waves-effect waves-light">War!</button>
         </form>
-        <h3>Miembros:</h3>
+        <h3>Members:</h3>
         <ul class=collection>
         {% for member in clan_members %}
             <li class=collection-item>{{ member.first_name }}</li>
         {% endfor %}
         </ul>
     {% else %}
-        <h4>¡Guerra!</h4>
+        <h4>War!</h4>
         <form method="POST" action="">
             {% csrf_token %}
             <input type=hidden name=form_type value=end_war>
-            <button type=submit class="btn waves-effect waves-light">Terminar guerra</button>
+            <button type=submit class="btn waves-effect waves-light">End war</button>
         </form>
     {% endif %}
 {% endblock content %}

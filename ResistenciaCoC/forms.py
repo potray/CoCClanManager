@@ -46,7 +46,7 @@ class RegistrationForm(ModelForm):
         }
         labels = {
             'username': 'Email',
-            'first_name': 'Nombre en el juego',
+            'first_name': 'In game name',
         }
         error_messages = {
             'username': {
