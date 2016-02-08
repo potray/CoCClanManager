@@ -5,12 +5,12 @@
     Welcome {{ user.first_name }}.<br>
 
     {% if  clan_membership == 'no_clan'%}
-        You don't belong to any clan. <a href=join_clan>Create</a> or <a href=create_clan>join</a> one.
+        You don't belong to any clan. <a href=/create_clan>Create</a> or <a href=/join_clan>join</a> one.
     {% else %}
         <h5>Clans you belong to:</h5>
         <div class=collection>
         {% for clan in clan_membership %}
-            <a href="/clan?tag={{ clan.tag }}" class=collection-item>{{ clan.name }}</a>
+            <a href="/clan?tag={{ clan.tag }}" class=collection-item>{{ clan.name }} #{{ clan.tag }}</a>
         {% endfor %}
         </div>
     {% endif %}

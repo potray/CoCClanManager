@@ -6,7 +6,16 @@
         {% csrf_token %}
         <div class=input-field>
             <i class="material-icons prefix">search</i>
-            <input type=text>
+            <input type=text id=search_clan name=search_clan>
+            <label for=search_clan>Enter clan tag (no # required)</label>
         </div>
     </form>
+    {% if clan %}
+        Found <a href="/clan?tag={{ clan.tag }}">{{ clan.name }}</a>
+    {% endif %}
+    {% if error != 'none' %}
+        <script>
+            Materialize.toast('{{ error }}', 4000);
+        </script>
+    {% endif %}
 {% endblock content %}

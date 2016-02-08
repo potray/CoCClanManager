@@ -1,12 +1,13 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 import time
 
 from ResistenciaCoC.forms import RegistrationForm, LoginForm, CreateClanForm
-from ResistenciaCoC.models import War, Attack, Castle, Clan
+from ResistenciaCoC.models import War, Attack, Castle, Clan, Member_request
 
 # Troop names
 troop_names = ['barbarian', 'archer', 'giant', 'goblin', 'wall_breaker', 'balloon', 'wizard', 'healer', 'dragon',
@@ -195,20 +196,44 @@ def create_clan(request):
             # The creator is also a member! We need to do this after saving because many to many relationships.
             new_clan.members.add(request.user)
             new_clan.save()
+            # The creator is also a manager.
+            new_clan.managers.add(request.user)
+            new_clan.save()
             return index_logged_in(request)
     else:
         form = CreateClanForm()
 
     return render(request, 'create_clan.html', {'form': form})
 
+
 @login_required
 def join_clan(request):
-    return render(request, 'join_clan.html')
+    args = {}
+    error = 'none'
+    if request.method == 'GET':
+        # Check if a clan was searched.
+        if 'search_clan' in request.GET:
+            searched_clan = request.GET['search_clan']
+            # Check if the clan tag is valid.
+            if len(searched_clan) > 0:
+                if len(searched_clan) != 8:
+                    error = 'Invalid clan tag'
+                else:
+                    clan = Clan.objects.filter(tag=searched_clan)
+                    if not clan:
+                        error = 'There isn\'t any clan with this tag'
+                    else:
+                        args['clan'] = clan[0]
+    args['error'] = error
+    return render(request, 'join_clan.html', args)
+
 
 @login_required
 def clan(request):
-    # Get clan data and render the page.
-    clan = Clan.objects.get(tag = request.GET['tag'])
+    error = 'None'
+    args = {}
+    clan = Clan.objects.get(tag=request.GET['tag'])
+    args['clan'] = clan
 
     if request.method == 'POST':
         form_type = request.POST['form_type']
@@ -223,5 +248,45 @@ def clan(request):
             clan.is_at_war = False
             clan.save()
 
-    return render(request, 'clan.html', {'clan': clan,
-                                         'clan_members': clan.members.all()})
+        # Join request.
+        elif form_type == 'join_clan':
+            # Check if there is a current member request
+            if Member_request.objects.filter(clan=clan, user=request.user):
+                error = 'You already sent a member request to this clan.'
+            else:
+                new_request = Member_request(clan=clan, user=request.user)
+                new_request.save()
+
+        # Manage member request
+        elif form_type == 'member_request':
+            request_id = request.POST['id']
+            print request_id
+            member_request = Member_request.objects.get(id=request_id)
+            accepted = request.POST['accepted']
+            if accepted == 'true':
+                # Add member to the clan.
+                clan.members.add(member_request.user)
+                clan.save()
+            # Delete the request
+            member_request.delete()
+
+    # Set the arguments depending on the privileges of the user.
+    privileges = 'None'
+    # Check if the user is a member of the clan.
+    if request.user in clan.members.all():
+        privileges = 'Member'
+        # Check for manager and admin.
+        if request.user in clan.managers.all():
+            privileges = 'Manager'
+            # Managers and admins have access to member requests.
+            member_requests = Member_request.objects.filter(clan=clan)
+            args['member_requests'] = member_requests
+            if request.user == clan.admin:
+                privileges = 'Administrator'
+
+    # Set the final arguments.
+    args['clan_members'] = clan.members.all()
+    args['privileges'] = privileges
+    args['error'] = error
+
+    return render(request, 'clan.html', args)
