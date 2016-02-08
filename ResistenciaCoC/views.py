@@ -1,3 +1,5 @@
+import os
+
 import requests
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
@@ -245,8 +247,12 @@ def clan(request):
             token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6ImI3ZTIzZjhhLWE1NzItNGJiYS05MmExLTVjMmMxNTQ3YWQxOSIsImlhdCI6MTQ1NDk2NjE4MCwic3ViIjoiZGV2ZWxvcGVyL2FjZjM1YTNkLWQyY2MtNmYzOC1jOTNmLTlmNmIzZWMyMWQ2YiIsInNjb3BlcyI6WyJjbGFzaCJdLCJsaW1pdHMiOlt7InRpZXIiOiJkZXZlbG9wZXIvc2lsdmVyIiwidHlwZSI6InRocm90dGxpbmcifSx7ImNpZHJzIjpbIjU0LjIyOC4yMDguMTgyIiwiMTI3LjAuMC4xIl0sInR5cGUiOiJjbGllbnQifV19.z4KKAYUQ_VLHEOCF-fkta5cCzJlIxi_SS1sblPdvxogf8Efx697XbxEVI08yMcrdyLjKQtSgny_kdPso8RZiLQ"
             token2 = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjZiMmE5OTNiLTRiNzgtNDhmZS1hZWJlLTAwZjVlNGJiOGZhMCIsImlhdCI6MTQ1NDk2Nzg3NSwic3ViIjoiZGV2ZWxvcGVyL2FjZjM1YTNkLWQyY2MtNmYzOC1jOTNmLTlmNmIzZWMyMWQ2YiIsInNjb3BlcyI6WyJjbGFzaCJdLCJsaW1pdHMiOlt7InRpZXIiOiJkZXZlbG9wZXIvc2lsdmVyIiwidHlwZSI6InRocm90dGxpbmcifSx7ImNpZHJzIjpbIjIxNy4yMTYuODQuMjQ2Il0sInR5cGUiOiJjbGllbnQifV19.GjxKGPa75kBy4rNpjF_jaH-_CJ5PDM70xwDDJuXPvo20eX4-dJGcpOqOvcyvJAL0w4EJPxXkZ6IpOO3kLQQOCQ"
             quota_key="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjE1NzdkNzg2LTgzNGUtNGMxMC1hYzE4LTUyYmUwZWQwYjYzNyIsImlhdCI6MTQ1NDk2OTYzNCwic3ViIjoiZGV2ZWxvcGVyL2FjZjM1YTNkLWQyY2MtNmYzOC1jOTNmLTlmNmIzZWMyMWQ2YiIsInNjb3BlcyI6WyJjbGFzaCJdLCJsaW1pdHMiOlt7InRpZXIiOiJkZXZlbG9wZXIvc2lsdmVyIiwidHlwZSI6InRocm90dGxpbmcifSx7ImNpZHJzIjpbIjU0LjE1NC4yMTguNjYiLCI1Mi4xNi4xMjEuMTMiXSwidHlwZSI6ImNsaWVudCJ9XX0.vr0uO4VHj7ryokQnO1WSpU41kyHF5IpBy5DllMOCmiRrUtyTQhNz_YP-X-lSrrCqvEWqQxeVlR-9rliDlkHFag"
-            url = "https://api.clashofclans.com/v1/clans/%2390JL9JCQ?Authorization=Bearer%20"+quota_key
-            r = requests.get(url)
+            url = "https://api.clashofclans.com/v1/clans/%2390JL9JCQ?Authorization=Bearer%20"+token2
+            proxies = {
+                "http": os.environ['QUOTAGUARDSTATIC_URL'],
+                "https": os.environ['QUOTAGUARDSTATIC_URL']
+            }
+            r = requests.get(url, proxies=proxies)
             json = r.json()
             print json['name']
             args['clan_name'] = json['name']
