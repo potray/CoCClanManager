@@ -14,6 +14,7 @@
             <li class=collection-item>{{ member.first_name }}</li>
         {% endfor %}
     </ul>
+    TESTING:<h1>{{ clan_name }}</h1>
     {% if privileges == 'None' %}
         <form action="" method=POST>
             {% csrf_token %}
